@@ -55,6 +55,7 @@ app.post('/sendBlockData', async (req, res) => {
         const response = await axios.post(`${minerURL}/receive-proposal`, proposedBlock);
         console.log(`✅ Sent to miner at ${minerURL}:`, response.data.message);
     } catch (err) {
+      console.log(err);
         console.error(`❌ Failed to send to miner at ${minerURL}:`, err.message);
     }
 }

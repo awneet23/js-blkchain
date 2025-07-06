@@ -12,7 +12,7 @@ class Block {
         
         // The hash is the cryptographic fingerprint of the block.
         // It will be calculated and set during the mining/validation phase.
-        this.hash = null; 
+        this.hash = this.calculateHash(); 
     }
 
     // A helper method to calculate the hash. This will be used by validators.
