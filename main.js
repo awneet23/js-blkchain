@@ -9,11 +9,11 @@ const BlockChain = new BlockchainNode();
 
 
 class State{
-  stateVariable = 10; // initial state variable
+  data = 10; // initial state variable
 
   // State Function
-  executeFunction(){
-    this.stateVariable = this.stateVariable + 1;
+  executeFunction(block){
+   this.data = block.data
   }
 }
 
@@ -75,6 +75,7 @@ app.post('/receive-proposal', async (req, res) => {
       // creating the block
       const newBlock = new Block(timestamp, data, previousHash);
       BlockChain.chain.push(newBlock);
+      st.executeFunction(newBlock);
     }
 
     res.send({
