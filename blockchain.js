@@ -28,7 +28,7 @@ class Block {
 class BlockchainNode {
     constructor() {
         // The confirmed, final chain. Starts with the Genesis Block.
-        const genesisBlock = new Block(Date.now(), "Genesis Block", "0");
+        const genesisBlock = new Block(0, "Genesis Block", "0");
         genesisBlock.hash = genesisBlock.calculateHash(); // Genesis hash is known.
         this.chain = [genesisBlock];
 

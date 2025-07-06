@@ -2,11 +2,12 @@ const express =require('express');
 const axios = require('axios');
 const { BlockchainNode, Block } = require('./blockchain.js');
 const app = express();
-const port = 5000;
+const port =3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const MINER_NODES = [
-    'http://localhost:4000' // Add more if you want
+    'https://7ce0-2405-201-a408-e125-ac04-e02e-5978-c53b.ngrok-free.app',
+    'https://3bda-49-37-72-44.ngrok-free.app' // Add more if you want
 ];
 const BlockChain = new BlockchainNode();
 
@@ -48,7 +49,7 @@ app.post('/sendBlockData', async (req, res) => {
     const proposedBlock = new Block(timestamp, data, previousHash);
 
     // Add block to pending pool
-    BlockChain.addProposedBlock(proposedBlock);
+    // BlockChain.addProposedBlock(proposedBlock);
     for (let minerURL of MINER_NODES) {
     try {
         const response = await axios.post(`${minerURL}/receive-proposal`, proposedBlock);
@@ -87,18 +88,10 @@ app.post('/receive-proposal', async (req, res) => {
     }
 
     res.send({
-        message: 'Block received by miner at 4000.',
+        message: 'Block received by miner at 6000.',
         
     });
 });
-
-
-
-
-
-
-
-
 
 
 

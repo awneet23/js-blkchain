@@ -29,7 +29,7 @@ app.get('/node-state', (req, res) => {
  * THE BLOCK PROPOSAL API
  * A client constructs a block (without a hash) and proposes it to our node.
  */
-app.post('/propose-block', async (req, res) => {
+app.post('/sendBlockData', async (req, res) => {
     const { data } = req.body;
 
     if (!data) {
