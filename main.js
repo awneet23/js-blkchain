@@ -1,7 +1,10 @@
 const express =require('express');
+const axios = require('axios');
 const { BlockchainNode, Block } = require('./blockchain.js');
 const app = express();
 const port = 5000;
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 const MINER_NODES = [
     'http://localhost:4000' // Add more if you want
 ];
@@ -19,6 +22,11 @@ class State{
 
 let st = new State();
 
+app.get('/node-state', (req, res) => {
+    res.json(BlockChain);
+});
+
+
 
 
 // API for receiving data and creating blocks
@@ -33,14 +41,14 @@ app.post('/sendBlockData', async (req, res) => {
     const timestamp = Date.now();
 
     // Get previous hash from latest block
-    const latestBlock = myNode.getLatestBlock();
+    const latestBlock = BlockChain.getLatestBlock();
     const previousHash = latestBlock.hash;
 
     // Create a new Block
     const proposedBlock = new Block(timestamp, data, previousHash);
 
     // Add block to pending pool
-    myNode.addProposedBlock(proposedBlock);
+    BlockChain.addProposedBlock(proposedBlock);
     for (let minerURL of MINER_NODES) {
     try {
         const response = await axios.post(`${minerURL}/receive-proposal`, proposedBlock);
