@@ -9,7 +9,7 @@ const BlockChain = new BlockchainNode();
 
 
 class State{
-  data = 10; // initial state variable
+  data ; // initial state variable
 
   // State Function
   executeFunction(block){
