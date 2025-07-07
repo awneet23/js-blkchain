@@ -93,17 +93,26 @@ app.post('/receive-proposal', async (req, res) => {
         
     });
 });
-
-
-
-
-
-
-
-
-
+ 
 app.listen(port, () => {
     console.log(`Blockchain node listening at http://localhost:${port}`);
     console.log('Use POST /propose-block to submit a block proposal.');
     console.log('Use GET /node-state to view the current state.');
 });
+
+
+// Function to resolve conflicts
+
+async function resolveConflict(){
+   console.log(' starting periodic sync...');
+    const currentNodeUrl = `http://localhost:${port}`;
+    const otherNodes = MINER_NODES.filter(node => node !== currentNodeUrl);
+     await BlockChain.resolveConflicts(otherNodes);
+    console.log(' Periodic sync finished.');
+
+}
+
+
+
+// conflict resolve 
+// 
