@@ -23,8 +23,11 @@ class State{
 
 let st = new State();
 
-app.get('/node-state', (req, res) => {
-    res.json(BlockChain);
+app.get('/chain', (req, res) => {
+     res.json({
+        length: BlockChain.chain.length,
+        chain: BlockChain.chain
+    });
 });
 
 
@@ -115,4 +118,4 @@ async function resolveConflict(){
 
 
 // conflict resolve 
-// 
+//    
