@@ -28,6 +28,7 @@ app.get('/chain', (req, res) => {
         length: BlockChain.chain.length,
         chain: BlockChain.chain
     });
+
 });
 
 
@@ -72,6 +73,7 @@ app.post('/sendBlockData', async (req, res) => {
 
 // API for receiving data by miner
 app.post('/receive-proposal', async (req, res) => {
+    const previousOfSideChain = BlockChain.getLatestBlock();
     const { timestamp, data, previousHash } = req.body;
 
     if (!timestamp || !data || !previousHash) {
@@ -82,15 +84,19 @@ app.post('/receive-proposal', async (req, res) => {
     console.log({ timestamp, data, previousHash });
     const previousblockhash = BlockChain.getLatestBlock().hash;
     
+     // creating the block
+     const newBlock = new Block(timestamp, data, previousHash);
     // verifying 
     if(previousblockhash === previousHash){
       console.log('Block verified');
-      // creating the block
-      const newBlock = new Block(timestamp, data, previousHash);
       BlockChain.chain.push(newBlock);
       st.executeFunction(newBlock);
     }
+    else{
+      BlockChain.sideChain.push = newBlock;
 
+    }
+    resolveConflict(previousOfSideChain);
     res.send({
         message: 'Block received by miner at 6000.',
         
@@ -106,13 +112,21 @@ app.listen(port, () => {
 
 // Function to resolve conflicts
 
-async function resolveConflict(){
+async function resolveConflict(targetBlock){
+  let newChain = [];
    console.log(' starting periodic sync...');
-    const currentNodeUrl = `http://localhost:${port}`;
-    const otherNodes = MINER_NODES.filter(node => node !== currentNodeUrl);
-     await BlockChain.resolveConflicts(otherNodes);
-    console.log(' Periodic sync finished.');
-
+   if(BlockChain.sideChain.length>BlockChain.chain.length){
+    for(let i = 0; i < BlockChain.chain.length;i++){
+      if(BlockChain.chain[i].hash!==targetBlock.hash){
+        newChain.push = BlockChain.chain[i];
+      }
+      else{
+         newChain.push = BlockChain.chain[i];
+         break;
+      }
+    }
+    BlockChain.chain = newChain.concat(sideChain);
+   }
 }
 
 

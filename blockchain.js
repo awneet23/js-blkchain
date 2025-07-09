@@ -32,6 +32,7 @@ class BlockchainNode {
     const genesisBlock = new Block(0, "Genesis Block", "0");
     genesisBlock.hash = genesisBlock.calculateHash(); // Genesis hash is known.
     this.chain = [genesisBlock];
+    this.sideChain = [];
     
     // A pool of blocks that have been proposed but not yet validated and added to the chain.
     this.pendingBlocks = [];
@@ -61,31 +62,35 @@ class BlockchainNode {
   
   // Function to resolve conflicts
   
-  async resolveConflicts(nodes){
-    let longestChain = null;
-    let maxLength = this.chain.length;
-    
-    for(const nodeUrl of nodes){
-      try{
-        const response = await axios.get(`${nodeUrl}/chain`);
-        const otherNodeChain = response.data.chain;
-        const otherNodeChainLength = response.data.length;
+  async resolveConflicts(nodes) {
+  let longestChain = null;
+  let maxLength = this.chain.length;
+
+  for (const nodeUrl of nodes) {
+    try {
+      const response = await axios.get(`${nodeUrl}/chain`);
+      const otherNodeChain = response.data.chain;
+      const otherNodeChainLength = response.data.length;
+
+      if (otherNodeChainLength > maxLength && this.isValidChain(otherNodeChain)) {
+        maxLength = otherNodeChainLength;
+        longestChain = otherNodeChain;
       }
-      catch (error) {
-                console.error(`Could not connect to node at ${nodeUrl}: ${error.message}`);
-            }
+    } catch (error) {
+      console.error(`❌ Could not connect to node at ${nodeUrl}: ${error.message}`);
     }
-    if (longestChain) {
-            this.chain = longestChain;
-            console.log(" Chain was replaced with the longest valid chain from the network.");
-            return true;
-        }
-
-        console.log(" Current chain is longest, No replacement needed.");
-        return false;
-
-
   }
+
+  if (longestChain) {
+    this.chain = longestChain;
+    console.log("✅ Chain was replaced with the longest valid chain from the network.");
+    return true;
+  }
+
+  console.log("✅ Current chain is longest or no valid longer chain found. No replacement needed.");
+  return false;
+}
+
   
   /**
   * Adds a proposed block to the list of pending blocks.
